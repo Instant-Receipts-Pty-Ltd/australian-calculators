@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GST Calculator Australia: Add or Remove 10% GST | Instant Receipts</title>
+  <meta name="description" content="Free ATO GST calculator for Australia. Add 10% GST to a price, or calculate the GST from a total (GST-inclusive) using the 1/11th rule. See the GST amount and the GST-exclusive price instantly." />
+  <link rel="canonical" href="https://instantreceipts.com.au/tools/gst-calculator" />
+  <link rel="stylesheet" href="shared.css" />
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "GST Calculator Australia",
+    "applicationCategory": "FinanceApplication",
+    "operatingSystem": "Web",
+    "url": "https://instantreceipts.com.au/tools/gst-calculator",
+    "description": "Free ATO GST calculator for Australia. Add 10% GST to a price, or calculate the GST from a total using the 1/11th rule.",
+    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "AUD" },
+    "provider": { "@type": "Organization", "name": "Instant Receipts", "url": "https://instantreceipts.com.au" }
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "How do I calculate GST from a total using this calculator?",
+        "acceptedAnswer": { "@type": "Answer", "text": "Switch to Remove GST (Inclusive) mode and enter the total. For example, on a $770 total, $770 ÷ 11 = $70 GST, which leaves $700 as the GST-exclusive price." }
+      },
+      {
+        "@type": "Question",
+        "name": "How do I add GST to a price?",
+        "acceptedAnswer": { "@type": "Answer", "text": "Multiply the GST-exclusive price by 1.1 (or add 10% of the price to itself). For example, $340 × 1.1 = $374, meaning $34 of that total is GST." }
+      },
+      {
+        "@type": "Question",
+        "name": "Is dividing by 1.1 the same as dividing by 11?",
+        "acceptedAnswer": { "@type": "Answer", "text": "No. Mixing them up is one of the most common GST mistakes. ÷ 1.1 gives you the GST-exclusive price; ÷ 11 gives you just the GST component." }
+      },
+      {
+        "@type": "Question",
+        "name": "What GST rate does this calculator use?",
+        "acceptedAnswer": { "@type": "Answer", "text": "10% by default, which is Australia's standard rate since GST began in July 2000, but you can change the GST Rate field if you need a different percentage." }
+      }
+    ]
+  }
+  </script>
+</head>
+<body>
+
+<nav class="site-nav">
+  <div class="inner">
+    <a class="brand" href="index.html">🧾 Instant Receipts Tools</a>
+    <ul class="nav-links">
+      <li><a href="gst-calculator.html">GST</a></li>
+      <li><a href="bas-calculator.html">BAS</a></li>
+      <li><a href="sole-trader-tax-calculator.html">Tax</a></li>
+      <li><a href="mileage-calculator.html">Mileage</a></li>
+      <li><a href="work-from-home-calculator.html">WFH</a></li>
+      <li><a href="invoice-generator.html">Invoice</a></li>
+    </ul>
+  </div>
+</nav>
+
+<div class="hero">
+  <div class="inner">
+    <h1>Australian GST Calculator</h1>
+    <p class="subtitle">
+      Add 10% GST to a price, or work out the GST inside a total that already includes it.
+      Enter an amount and you get the GST and the GST-exclusive price instantly.
+    </p>
+
+    <div class="calc-card">
+      <h2>GST Calculator</h2>
+      <p class="hint">Australia's GST rate is 10%. Change the rate below if you need a different percentage.</p>
+
+      <div class="field-row">
+        <label>Mode</label>
+        <div class="toggle-group">
+          <button class="toggle-btn active" id="btn-add" onclick="setMode('add')">Add GST (Exclusive)</button>
+          <button class="toggle-btn" id="btn-remove" onclick="setMode('remove')">Remove GST (Inclusive)</button>
+        </div>
+      </div>
+
+      <div class="row2">
+        <div class="field-row" style="margin-bottom:0">
+          <label id="amount-label" for="amount">Price (excluding GST)</label>
+          <div class="input-wrap">
+            <span class="prefix">$</span>
+            <input type="number" id="amount" min="0" step="0.01" placeholder="0.00" oninput="calculate()" />
+          </div>
+        </div>
+        <div class="field-row" style="margin-bottom:0">
+          <label for="rate">GST Rate (%)</label>
+          <input type="number" id="rate" min="0" max="100" step="0.1" value="10" oninput="calculate()" />
+        </div>
+      </div>
+
+      <div id="result" class="result-box mt-4 hidden">
+        <div class="result-row">
+          <span class="label" id="base-label">Price (ex GST)</span>
+          <span class="value" id="base-val">$0.00</span>
+        </div>
+        <div class="result-row">
+          <span class="label" id="gst-label">GST (10%)</span>
+          <span class="value-green" id="gst-val">$0.00</span>
+        </div>
+        <hr class="divider" />
+        <div class="result-row total">
+          <span id="total-label">Total (incl. GST)</span>
+          <span id="total-val">$0.00</span>
+        </div>
+      </div>
+
+      <div class="mt-4" style="font-size:13px; color: var(--brand-brown-70);">
+        <span>Add GST: <strong>price × 1.1</strong></span> &nbsp;|&nbsp;
+        <span>Remove GST: <strong>total ÷ 11</strong> = GST</span>
+      </div>
+    </div>
+
+    <div class="related-links">
+      <a href="bas-calculator.html">BAS calculator</a>
+      <a href="invoice-generator.html">Invoice generator</a>
+      <a href="sole-trader-tax-calculator.html">Sole trader tax calculator</a>
+      <a href="https://instantreceipts.com.au/blog/calculate-gst-quarterly" target="_blank" rel="noopener">How to calculate GST</a>
+    </div>
+  </div>
+</div>
+
+<section class="section bg-gray">
+  <div class="inner">
+    <h2>How the 1/11th GST rule works</h2>
+    <p>
+      Australia's GST rate is 10%, which works out to <strong>1/11th</strong> of any GST-inclusive price.
+      The two examples below show it both ways.
+    </p>
+
+    <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(240px,1fr)); gap:20px; margin-bottom: 32px;">
+      <div class="example-box">
+        <h3>Adding GST</h3>
+        <p style="font-size:13px; color:var(--brand-brown-70); margin-bottom:0">Multiply the GST-exclusive price by 1.1</p>
+        <div class="example-inner">
+          <table style="width:100%; font-size:14px;">
+            <tr><td style="color:var(--brand-brown-70)">Base price</td><td style="text-align:right;font-weight:500">$340.00</td></tr>
+            <tr><td style="color:var(--brand-brown-70)">× 1.1</td><td style="text-align:right;font-weight:500;color:var(--brand-green)">+ $34.00 GST</td></tr>
+            <tr><td colspan="2"><hr style="border:none;border-top:1px solid rgba(99,163,97,0.2);margin:8px 0"></td></tr>
+            <tr><td style="font-weight:700">Total (incl. GST)</td><td style="text-align:right;font-weight:700">$374.00</td></tr>
+          </table>
+        </div>
+      </div>
+
+      <div class="example-box" style="border-color:rgba(255,197,15,0.4); background:rgba(255,197,15,0.1)">
+        <h3>Removing GST</h3>
+        <p style="font-size:13px; color:var(--brand-brown-70); margin-bottom:0">Divide the GST-inclusive total by 11</p>
+        <div class="example-inner" style="border-color:rgba(255,197,15,0.4)">
+          <table style="width:100%; font-size:14px;">
+            <tr><td style="color:var(--brand-brown-70)">Total (incl. GST)</td><td style="text-align:right;font-weight:500">$770.00</td></tr>
+            <tr><td style="color:var(--brand-brown-70)">÷ 11</td><td style="text-align:right;font-weight:500;color:var(--brand-green)">$70.00 GST</td></tr>
+            <tr><td colspan="2"><hr style="border:none;border-top:1px solid rgba(255,197,15,0.3);margin:8px 0"></td></tr>
+            <tr><td style="font-weight:700">Base price (excl. GST)</td><td style="text-align:right;font-weight:700">$700.00</td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="cta-inline">
+      <div class="text">
+        <strong>Doing this for every receipt gets old fast</strong>
+        <p>Instant Receipts reads the GST off every receipt and invoice automatically the moment you scan it — no dividing by 11, no manual splitting for BAS prep or expense claims.</p>
+      </div>
+      <a href="https://instantreceipts.com.au/signup" class="btn-green" target="_blank" rel="noopener">
+        Try it free →
+      </a>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="inner">
+    <h2>GST calculator: frequently asked questions</h2>
+    <ul class="faq-list">
+      <li class="faq-item">
+        <button class="faq-btn" onclick="toggleFaq(this)">
+          How do I calculate GST from a total using this calculator?
+          <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="faq-answer">Switch to "Remove GST (Inclusive)" mode above and enter the total. For example, on a $770 total, $770 ÷ 11 = $70 GST, which leaves $700 as the GST-exclusive price.</div>
+      </li>
+      <li class="faq-item">
+        <button class="faq-btn" onclick="toggleFaq(this)">
+          How do I add GST to a price?
+          <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="faq-answer">Multiply the GST-exclusive price by 1.1 (or add 10% of the price to itself). For example, $340 × 1.1 = $374, meaning $34 of that total is GST.</div>
+      </li>
+      <li class="faq-item">
+        <button class="faq-btn" onclick="toggleFaq(this)">
+          How do I remove GST from a price (excluding GST calculator)?
+          <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="faq-answer">Divide the GST-inclusive total by 11 to find the GST component, then subtract it from the total to get the price excluding GST. For a $770 total: $770 ÷ 11 = $70 GST, so the GST-exclusive price is $700.</div>
+      </li>
+      <li class="faq-item">
+        <button class="faq-btn" onclick="toggleFaq(this)">
+          Is dividing by 1.1 the same as dividing by 11?
+          <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="faq-answer">No. Mixing them up is one of the most common GST mistakes. ÷ 1.1 gives you the GST-exclusive price; ÷ 11 gives you just the GST component. "Remove GST" mode above works out both at once.</div>
+      </li>
+      <li class="faq-item">
+        <button class="faq-btn" onclick="toggleFaq(this)">
+          What GST rate does this calculator use?
+          <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="faq-answer">10% by default, which is Australia's standard rate since GST began in July 2000, but you can change the GST Rate field above if you ever need a different percentage.</div>
+      </li>
+      <li class="faq-item">
+        <button class="faq-btn" onclick="toggleFaq(this)">
+          Is this the same method the ATO uses to calculate GST?
+          <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="faq-answer">Yes. The ATO calculates GST payable using the same 1/11th rule: divide the GST-inclusive amount by 11. This calculator uses that exact formula, so the result matches what you'd report on a BAS.</div>
+      </li>
+      <li class="faq-item">
+        <button class="faq-btn" onclick="toggleFaq(this)">
+          Does this calculator work for GST-free items?
+          <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="faq-answer">No. It assumes the amount is subject to GST. Some purchases in Australia are GST-free, including most fresh food and basic groceries, health and medical services, education courses, and some childcare.</div>
+      </li>
+    </ul>
+  </div>
+</section>
+
+<div class="cta-section">
+  <div class="inner">
+    <div class="cta-box">
+      <h2>Stop working out GST by hand</h2>
+      <p>Instant Receipts detects the GST on every receipt and invoice automatically, then builds your BAS Summary and GST report when it's time to lodge.</p>
+      <a href="https://instantreceipts.com.au/signup" class="btn-yellow" target="_blank" rel="noopener">
+        Try 30 scans for free →
+      </a>
+      <p class="sub">No credit card required</p>
+    </div>
+  </div>
+</div>
+
+<footer class="site-footer">
+  <div class="footer-links">
+    <a href="index.html">All tools</a>
+    <a href="bas-calculator.html">BAS Calculator</a>
+    <a href="sole-trader-tax-calculator.html">Sole Trader Tax Calculator</a>
+    <a href="mileage-calculator.html">Mileage Calculator</a>
+    <a href="work-from-home-calculator.html">Work From Home Calculator</a>
+    <a href="invoice-generator.html">Invoice Generator</a>
+  </div>
+  <p>
+    Full-featured receipt scanning, expense tracking and BAS preparation at
+    <a href="https://instantreceipts.com.au" target="_blank" rel="noopener"><strong>instantreceipts.com.au</strong></a>
+  </p>
+  <p style="margin-top:8px;">© 2024 Instant Receipts. Free tools — no signup required.</p>
+</footer>
+
+<script>
+  let mode = 'add';
+
+  function setMode(m) {
+    mode = m;
+    document.getElementById('btn-add').classList.toggle('active', m === 'add');
+    document.getElementById('btn-remove').classList.toggle('active', m === 'remove');
+    const amountLabel = document.getElementById('amount-label');
+    amountLabel.textContent = m === 'add' ? 'Price (excluding GST)' : 'Total (including GST)';
+    calculate();
+  }
+
+  function aud(n) {
+    return n.toLocaleString('en-AU', { style: 'currency', currency: 'AUD' });
+  }
+
+  function calculate() {
+    const amount = parseFloat(document.getElementById('amount').value);
+    const rate = parseFloat(document.getElementById('rate').value) / 100;
+    const result = document.getElementById('result');
+
+    if (!amount || amount <= 0 || isNaN(rate)) {
+      result.classList.add('hidden');
+      return;
+    }
+
+    let base, gst, total, rateLabel;
+    rateLabel = (rate * 100).toLocaleString('en-AU', { maximumFractionDigits: 2 }) + '%';
+
+    if (mode === 'add') {
+      base = amount;
+      gst = Math.round(amount * rate * 100) / 100;
+      total = Math.round((base + gst) * 100) / 100;
+      document.getElementById('base-label').textContent = 'Price (ex GST)';
+      document.getElementById('gst-label').textContent = 'GST (' + rateLabel + ')';
+      document.getElementById('total-label').textContent = 'Total (incl. GST)';
+      document.getElementById('base-val').textContent = aud(base);
+      document.getElementById('gst-val').textContent = aud(gst);
+      document.getElementById('total-val').textContent = aud(total);
+    } else {
+      total = amount;
+      // GST = total / (1 + rate) * rate = total * rate / (1 + rate)
+      // For 10%: total / 11
+      gst = Math.round((total / (1 + rate) * rate) * 100) / 100;
+      base = Math.round((total - gst) * 100) / 100;
+      document.getElementById('base-label').textContent = 'Price (ex GST)';
+      document.getElementById('gst-label').textContent = 'GST (' + rateLabel + ')';
+      document.getElementById('total-label').textContent = 'Total (incl. GST)';
+      document.getElementById('base-val').textContent = aud(base);
+      document.getElementById('gst-val').textContent = aud(gst);
+      document.getElementById('total-val').textContent = aud(total);
+    }
+
+    result.classList.remove('hidden');
+  }
+
+  function toggleFaq(btn) {
+    const item = btn.closest('.faq-item');
+    item.classList.toggle('open');
+  }
+</script>
+</body>
+</html>

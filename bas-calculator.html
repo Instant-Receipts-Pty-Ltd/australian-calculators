@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BAS Calculator Australia: Work Out G1, 1A and 1B | Instant Receipts</title>
+  <meta name="description" content="Free BAS calculator for Australian sole traders and small businesses. Enter your sales and purchases to see your GST on sales (1A), GST on purchases (1B) and whether you pay or get a refund." />
+  <link rel="canonical" href="https://instantreceipts.com.au/tools/bas-calculator" />
+  <link rel="stylesheet" href="shared.css" />
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "BAS Calculator Australia",
+    "applicationCategory": "FinanceApplication",
+    "operatingSystem": "Web",
+    "url": "https://instantreceipts.com.au/tools/bas-calculator",
+    "description": "Free BAS calculator for Australian sole traders. Enter your sales and purchases to see G1, 1A and 1B.",
+    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "AUD" },
+    "provider": { "@type": "Organization", "name": "Instant Receipts", "url": "https://instantreceipts.com.au" }
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "How is a BAS calculated?",
+        "acceptedAnswer": { "@type": "Answer", "text": "For the GST part, take the GST you collected on sales (1A) and subtract the GST you paid on business purchases (1B). If 1A is bigger you pay the difference. If 1B is bigger you get a refund." }
+      },
+      {
+        "@type": "Question",
+        "name": "What are G1, 1A and 1B on a BAS?",
+        "acceptedAnswer": { "@type": "Answer", "text": "G1 is your total sales, including GST-free sales. 1A is the GST on your sales. 1B is the GST included in the price of your purchases, which you claim back as a credit." }
+      },
+      {
+        "@type": "Question",
+        "name": "Does this give me a BAS I can lodge?",
+        "acceptedAnswer": { "@type": "Answer", "text": "No. It estimates the GST part of a simpler BAS (G1, 1A and 1B). Your own BAS may also include PAYG withholding or instalments, and you lodge it through ATO online services or a registered agent." }
+      }
+    ]
+  }
+  </script>
+</head>
+<body>
+
+<nav class="site-nav">
+  <div class="inner">
+    <a class="brand" href="index.html">🧾 Instant Receipts Tools</a>
+    <ul class="nav-links">
+      <li><a href="gst-calculator.html">GST</a></li>
+      <li><a href="bas-calculator.html">BAS</a></li>
+      <li><a href="sole-trader-tax-calculator.html">Tax</a></li>
+      <li><a href="mileage-calculator.html">Mileage</a></li>
+      <li><a href="work-from-home-calculator.html">WFH</a></li>
+      <li><a href="invoice-generator.html">Invoice</a></li>
+    </ul>
+  </div>
+</nav>
+
+<div class="hero">
+  <div class="inner">
+    <h1>BAS Calculator Australia</h1>
+    <p class="subtitle">
+      Work out the GST part of your BAS. Enter your sales and purchases for the period and you get
+      <strong>G1</strong> (total sales), <strong>1A</strong> (GST on sales) and
+      <strong>1B</strong> (GST on purchases), plus whether you pay or get a refund.
+    </p>
+
+    <div class="calc-card">
+      <h2>GST on your BAS</h2>
+      <p class="hint">Estimate only. This is not a BAS you can lodge. Enter amounts for one BAS period.</p>
+
+      <div class="field-row">
+        <label for="bas-sales">Sales that include GST</label>
+        <div class="input-wrap">
+          <span class="prefix">$</span>
+          <input type="number" id="bas-sales" min="0" step="0.01" placeholder="0.00" oninput="calcBas()" />
+        </div>
+      </div>
+      <div class="field-row">
+        <label for="bas-free">GST-free sales (optional)</label>
+        <div class="input-wrap">
+          <span class="prefix">$</span>
+          <input type="number" id="bas-free" min="0" step="0.01" placeholder="0.00" oninput="calcBas()" />
+        </div>
+      </div>
+      <div class="field-row">
+        <label for="bas-purch">Business purchases that include GST</label>
+        <div class="input-wrap">
+          <span class="prefix">$</span>
+          <input type="number" id="bas-purch" min="0" step="0.01" placeholder="0.00" oninput="calcBas()" />
+        </div>
+      </div>
+
+      <div id="bas-result" class="result-box hidden">
+        <div class="result-row">
+          <span class="label">G1 Total sales</span>
+          <span class="value" id="bas-g1">$0.00</span>
+        </div>
+        <div class="result-row">
+          <span class="label">1A GST on sales</span>
+          <span class="value-green" id="bas-1a">$0.00</span>
+        </div>
+        <div class="result-row">
+          <span class="label">1B GST on purchases</span>
+          <span class="value-green" id="bas-1b">$0.00</span>
+        </div>
+        <hr class="divider" />
+        <div class="result-row total">
+          <span id="bas-net-label">GST to pay (1A minus 1B)</span>
+          <span id="bas-net">$0.00</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="related-links">
+      <a href="gst-calculator.html">GST calculator</a>
+      <a href="sole-trader-tax-calculator.html">Sole trader tax calculator</a>
+      <a href="invoice-generator.html">Invoice generator</a>
+      <a href="https://instantreceipts.com.au/how-to/prepare-your-bas" target="_blank" rel="noopener">How to prepare your BAS</a>
+    </div>
+  </div>
+</div>
+
+<section class="section bg-gray">
+  <div class="inner">
+    <h2>How to calculate your BAS</h2>
+    <p>
+      Simpler BAS is the default for businesses with a GST turnover under $10 million, and it reports three
+      GST figures. G1 is your total sales. 1A is the GST you charged on those sales.
+      1B is the GST you paid on business purchases.
+    </p>
+    <p>
+      Subtract 1B from 1A. A positive answer is what you pay the ATO. A negative answer is a refund.
+    </p>
+
+    <div class="example-box mt-4">
+      <h3>Try it with these figures</h3>
+      <p style="font-size:13px; color:var(--brand-brown-70); margin-bottom:0">A sole trader with $16,500 of sales and $6,600 of purchases, both including GST.</p>
+      <div class="example-inner">
+        <table style="width:100%; font-size:14px;">
+          <tr><td style="color:var(--brand-brown-70)">G1 Total sales</td><td style="text-align:right;font-weight:500">$16,500.00</td></tr>
+          <tr><td style="color:var(--brand-brown-70)">1A GST on sales ($16,500 ÷ 11)</td><td style="text-align:right;font-weight:500;color:var(--brand-green)">$1,500.00</td></tr>
+          <tr><td style="color:var(--brand-brown-70)">1B GST on purchases ($6,600 ÷ 11)</td><td style="text-align:right;font-weight:500;color:var(--brand-green)">$600.00</td></tr>
+          <tr><td colspan="2"><hr style="border:none;border-top:1px solid rgba(99,163,97,0.2);margin:8px 0"></td></tr>
+          <tr><td style="font-weight:700">GST to pay (1A minus 1B)</td><td style="text-align:right;font-weight:700">$900.00</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <h2 class="mt-8">What this calculator leaves out</h2>
+    <p>
+      It only covers the GST labels, and it is for Simpler BAS. If your GST turnover is $10 million or more
+      you use full reporting, which has more labels. Enter only purchases that have GST in the price and that
+      you can claim credits on. If you have staff you may also report PAYG withholding, and you
+      may pay PAYG instalments.
+    </p>
+    <p>Use the same reporting period for sales and purchases.</p>
+
+    <div class="cta-inline">
+      <div class="text">
+        <strong>Skip the adding up</strong>
+        <p>Instant Receipts reads the GST on every receipt, matches it to your bank transactions and shows your BAS figures for the period. You check them, then lodge through the ATO as usual.</p>
+      </div>
+      <a href="https://instantreceipts.com.au/signup" class="btn-green" target="_blank" rel="noopener">
+        Try it free →
+      </a>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="inner">
+    <h2>BAS calculator: frequently asked questions</h2>
+    <ul class="faq-list">
+      <li class="faq-item">
+        <button class="faq-btn" onclick="toggleFaq(this)">
+          How is a BAS calculated?
+          <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="faq-answer">For the GST part, take the GST you collected on sales (1A) and subtract the GST you paid on business purchases (1B). If 1A is bigger you pay the difference. If 1B is bigger you get a refund.</div>
+      </li>
+      <li class="faq-item">
+        <button class="faq-btn" onclick="toggleFaq(this)">
+          What are G1, 1A and 1B on a BAS?
+          <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="faq-answer">G1 is your total sales, including GST-free sales. You can report it with or without GST as long as you say which on the form. 1A is the GST on your sales. 1B is the GST included in the price of your purchases, which you claim back as a credit. You do not report your total purchases.</div>
+      </li>
+      <li class="faq-item">
+        <button class="faq-btn" onclick="toggleFaq(this)">
+          What do I enter in the calculator?
+          <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="faq-answer">Your sales and your business purchases for one BAS period, with the GST included. GST-free sales go in their own box. They count towards G1 but add no GST.</div>
+      </li>
+      <li class="faq-item">
+        <button class="faq-btn" onclick="toggleFaq(this)">
+          Does this give me a BAS I can lodge?
+          <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="faq-answer">No. It estimates the GST part of a simpler BAS (G1, 1A and 1B). Your own BAS may also include PAYG withholding or instalments, and you lodge it through ATO online services or a registered agent.</div>
+      </li>
+    </ul>
+  </div>
+</section>
+
+<div class="cta-section">
+  <div class="inner">
+    <div class="cta-box">
+      <h2>Want your BAS figures worked out for you?</h2>
+      <p>Scan your receipts, then connect your bank or upload a statement, and Instant Receipts builds the BAS figures for your period. Check them, then lodge with the ATO.</p>
+      <a href="https://instantreceipts.com.au/signup" class="btn-yellow" target="_blank" rel="noopener">
+        Try 30 scans for free →
+      </a>
+      <p class="sub">No credit card required</p>
+    </div>
+  </div>
+</div>
+
+<footer class="site-footer">
+  <div class="footer-links">
+    <a href="index.html">All tools</a>
+    <a href="gst-calculator.html">GST Calculator</a>
+    <a href="sole-trader-tax-calculator.html">Sole Trader Tax Calculator</a>
+    <a href="mileage-calculator.html">Mileage Calculator</a>
+    <a href="work-from-home-calculator.html">Work From Home Calculator</a>
+    <a href="invoice-generator.html">Invoice Generator</a>
+  </div>
+  <p>
+    Full-featured receipt scanning, expense tracking and BAS preparation at
+    <a href="https://instantreceipts.com.au" target="_blank" rel="noopener"><strong>instantreceipts.com.au</strong></a>
+  </p>
+  <p style="margin-top:8px;">© 2024 Instant Receipts. Free tools — no signup required.</p>
+</footer>
+
+<script>
+  function aud(n) {
+    return n.toLocaleString('en-AU', { style: 'currency', currency: 'AUD' });
+  }
+  function round2(n) { return Math.round(n * 100) / 100; }
+
+  function calcBas() {
+    const sales  = Math.max(0, parseFloat(document.getElementById('bas-sales').value) || 0);
+    const free   = Math.max(0, parseFloat(document.getElementById('bas-free').value) || 0);
+    const purch  = Math.max(0, parseFloat(document.getElementById('bas-purch').value) || 0);
+    const result = document.getElementById('bas-result');
+
+    if (sales === 0 && free === 0 && purch === 0) {
+      result.classList.add('hidden');
+      return;
+    }
+
+    const g1   = round2(sales + free);
+    const oneA = round2(sales / 11);
+    const oneB = round2(purch / 11);
+    const net  = round2(oneA - oneB);
+
+    document.getElementById('bas-g1').textContent  = aud(g1);
+    document.getElementById('bas-1a').textContent  = aud(oneA);
+    document.getElementById('bas-1b').textContent  = aud(oneB);
+    document.getElementById('bas-net').textContent = aud(Math.abs(net));
+    document.getElementById('bas-net-label').textContent =
+      net >= 0 ? 'GST to pay (1A minus 1B)' : 'GST refund (1B minus 1A)';
+
+    result.classList.remove('hidden');
+  }
+
+  function toggleFaq(btn) {
+    btn.closest('.faq-item').classList.toggle('open');
+  }
+</script>
+</body>
+</html>

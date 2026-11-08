@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mileage Calculator Australia: ATO Cents Per KM 2026-27 | Instant Receipts</title>
+  <meta name="description" content="Free mileage calculator for Australian sole traders. Enter your business kilometres to work out your cents per km deduction for 2026-27 (91 cents/km), and compare it with the logbook method." />
+  <link rel="canonical" href="https://instantreceipts.com.au/tools/mileage-calculator" />
+  <link rel="stylesheet" href="shared.css" />
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "Mileage Calculator Australia",
+    "applicationCategory": "FinanceApplication",
+    "operatingSystem": "Web",
+    "url": "https://instantreceipts.com.au/tools/mileage-calculator",
+    "description": "Free mileage calculator for Australian sole traders. ATO cents per km rates 2022-23 to 2026-27.",
+    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "AUD" },
+    "provider": { "@type": "Organization", "name": "Instant Receipts", "url": "https://instantreceipts.com.au" }
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "What is the ATO cents per km rate for 2026-27?",
+        "acceptedAnswer": { "@type": "Answer", "text": "The rate is 91 cents per business kilometre for the 2026-27 income year. It was 88 cents for 2025-26 and 2024-25. The calculator uses the rate for the year you pick." }
+      },
+      {
+        "@type": "Question",
+        "name": "What is the most I can claim with the cents per km method?",
+        "acceptedAnswer": { "@type": "Answer", "text": "You can claim up to 5,000 business kilometres per car. At 91 cents that is a maximum of $4,550 for 2026-27. If you drive more than that for work, the logbook method may give you a bigger deduction." }
+      },
+      {
+        "@type": "Question",
+        "name": "Do I need receipts for the cents per km method?",
+        "acceptedAnswer": { "@type": "Answer", "text": "You do not need receipts for the car running costs. The rate already covers fuel, servicing, rego, insurance and depreciation. You do need to show how you worked out your business kilometres." }
+      }
+    ]
+  }
+  </script>
+</head>
+<body>
+
+<nav class="site-nav">
+  <div class="inner">
+    <a class="brand" href="index.html">🧾 Instant Receipts Tools</a>
+    <ul class="nav-links">
+      <li><a href="gst-calculator.html">GST</a></li>
+      <li><a href="bas-calculator.html">BAS</a></li>
+      <li><a href="sole-trader-tax-calculator.html">Tax</a></li>
+      <li><a href="mileage-calculator.html">Mileage</a></li>
+      <li><a href="work-from-home-calculator.html">WFH</a></li>
+      <li><a href="invoice-generator.html">Invoice</a></li>
+    </ul>
+  </div>
+</nav>
+
+<div class="hero">
+  <div class="inner">
+    <h1>Mileage Calculator Australia</h1>
+    <p class="subtitle">
+      Work out your ATO cents per km deduction. The rate for 2026-27 is
+      <strong>91 cents per km</strong>, for up to <strong>5,000 km per car</strong>.
+      Compare with the logbook method below.
+    </p>
+
+    <div class="calc-card">
+      <h2>Cents per km calculator</h2>
+      <p class="hint">Estimate only. Check the rate on ato.gov.au before you lodge.</p>
+
+      <div class="row2">
+        <div class="field-row" style="margin-bottom:0">
+          <label for="km-amount">Business kilometres</label>
+          <input type="number" id="km-amount" min="0" step="1" placeholder="0" oninput="calcMileage()" />
+        </div>
+        <div class="field-row" style="margin-bottom:0">
+          <label for="km-year">Income year</label>
+          <select id="km-year" onchange="calcMileage()">
+            <option value="2026-27" data-rate="0.91">2026-27</option>
+            <option value="2025-26" data-rate="0.88">2025-26</option>
+            <option value="2024-25" data-rate="0.88">2024-25</option>
+            <option value="2023-24" data-rate="0.85">2023-24</option>
+            <option value="2022-23" data-rate="0.78">2022-23</option>
+          </select>
+        </div>
+      </div>
+
+      <div id="km-result" class="result-box mt-4 hidden">
+        <div class="result-row">
+          <span class="label">Kilometres claimed</span>
+          <span class="value" id="km-claimable">0 km</span>
+        </div>
+        <div class="result-row">
+          <span class="label" id="km-rate-label">Rate for 2026-27</span>
+          <span class="value-green">91 cents per km</span>
+        </div>
+        <hr class="divider" />
+        <div class="result-row total">
+          <span>Cents per km deduction</span>
+          <span id="km-deduction">$0.00</span>
+        </div>
+        <p id="km-over-note" class="result-note hidden">
+          The method stops at 5,000 km per car. You entered more, so only the first 5,000 km are counted.
+          The logbook method below may give you more.
+        </p>
+      </div>
+
+      <!-- Logbook comparison -->
+      <div class="compare-card">
+        <h3>Compare with the logbook method</h3>
+        <p class="hint">Optional. Add your total car costs and business use percentage.</p>
+        <div class="row2">
+          <div class="field-row" style="margin-bottom:0">
+            <label for="car-costs">Total car costs for the year</label>
+            <div class="input-wrap">
+              <span class="prefix">$</span>
+              <input type="number" id="car-costs" min="0" step="1" placeholder="0" oninput="calcMileage()" />
+            </div>
+          </div>
+          <div class="field-row" style="margin-bottom:0">
+            <label for="biz-use">Business use (%)</label>
+            <input type="number" id="biz-use" min="0" max="100" step="1" placeholder="0" oninput="calcMileage()" />
+          </div>
+        </div>
+        <div id="logbook-result" class="result-box mt-4 hidden">
+          <div class="result-row total">
+            <span>Logbook method deduction</span>
+            <span id="lb-deduction">$0.00</span>
+          </div>
+          <p id="lb-compare" class="result-note"></p>
+        </div>
+      </div>
+    </div>
+
+    <div class="related-links">
+      <a href="work-from-home-calculator.html">Work from home calculator</a>
+      <a href="sole-trader-tax-calculator.html">Sole trader tax calculator</a>
+      <a href="invoice-generator.html">Invoice generator</a>
+    </div>
+  </div>
+</div>
+
+<section class="section bg-gray">
+  <div class="inner">
+    <h2>ATO cents per km rates</h2>
+    <p>
+      The cents per kilometre method lets you claim a set rate for each business kilometre you drive in
+      your own car. The rate covers fuel, servicing, registration, insurance and depreciation — you do
+      not add those on top. The ATO sets the rate each year.
+    </p>
+    <div class="data-table-wrap">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Income year</th>
+            <th>Rate per km</th>
+            <th>Maximum (5,000 km)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>2026-27</td><td>91 cents</td><td>$4,550.00</td></tr>
+          <tr><td>2025-26</td><td>88 cents</td><td>$4,400.00</td></tr>
+          <tr><td>2024-25</td><td>88 cents</td><td>$4,400.00</td></tr>
+          <tr><td>2023-24</td><td>85 cents</td><td>$4,250.00</td></tr>
+          <tr><td>2022-23</td><td>78 cents</td><td>$3,900.00</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2>How the cents per km method works</h2>
+    <p>
+      Take your business kilometres for the year, up to 5,000 per car, and multiply by the rate. If you
+      drove 3,000 business kilometres in 2026-27, your deduction is 3,000 × $0.91 = $2,730.
+    </p>
+    <p>
+      You do not need receipts for the running costs. You do need to be able to show how you worked out
+      your kilometres — a diary, a list of trips with dates and client names, or the myDeductions tool
+      in the ATO app. You also need to show you own or lease the car.
+    </p>
+    <p>
+      The method is for sole traders and partnerships, and only for cars (vehicles that carry less than
+      one tonne and fewer than 9 passengers). Travel between home and your usual workplace is private
+      and does not count.
+    </p>
+
+    <h2 class="mt-8">Cents per km or logbook method?</h2>
+    <p>
+      Cents per km is quick and needs no cost receipts, but it stops at 5,000 km. The logbook method has
+      no kilometre limit. You keep a logbook for 12 weeks, work out your business use percentage, then
+      claim that share of fuel, rego, insurance, servicing and depreciation. If you do a lot of driving
+      for work, it often gives the bigger deduction.
+    </p>
+
+    <div class="cta-inline">
+      <div class="text">
+        <strong>Using the logbook method? Keep every car receipt</strong>
+        <p>Fuel, rego, insurance and servicing all need a receipt. Scan them as you go with Instant Receipts and they are saved, sorted and ready at tax time.</p>
+      </div>
+      <a href="https://instantreceipts.com.au/signup" class="btn-green" target="_blank" rel="noopener">
+        Try it free →
+      </a>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="inner">
+    <h2>Mileage calculator: frequently asked questions</h2>
+    <ul class="faq-list">
+      <li class="faq-item">
+        <button class="faq-btn" onclick="toggleFaq(this)">
+          What is the ATO cents per km rate for 2026-27?
+          <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="faq-answer">The rate is 91 cents per business kilometre for the 2026-27 income year. It was 88 cents for 2025-26 and 2024-25. The calculator above uses the rate for the year you pick.</div>
+      </li>
+      <li class="faq-item">
+        <button class="faq-btn" onclick="toggleFaq(this)">
+          How do I calculate my cents per km deduction?
+          <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="faq-answer">Multiply your business kilometres by the rate. For example, 3,000 km at 91 cents is $2,730. You can claim up to 5,000 km per car each year.</div>
+      </li>
+      <li class="faq-item">
+        <button class="faq-btn" onclick="toggleFaq(this)">
+          What is the most I can claim with the cents per km method?
+          <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="faq-answer">You can claim up to 5,000 business kilometres per car. At 91 cents that is a maximum of $4,550 for 2026-27. If you drive more than that for work, the logbook method may give you a bigger deduction.</div>
+      </li>
+      <li class="faq-item">
+        <button class="faq-btn" onclick="toggleFaq(this)">
+          Do I need receipts for the cents per km method?
+          <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="faq-answer">You do not need receipts for the car running costs. The rate already covers fuel, servicing, rego, insurance and depreciation. You do need to show how you worked out your business kilometres, for example with a diary or the myDeductions tool in the ATO app.</div>
+      </li>
+      <li class="faq-item">
+        <button class="faq-btn" onclick="toggleFaq(this)">
+          Can I claim travel from home to work?
+          <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="faq-answer">Usually not. Travel between home and your regular workplace is private. If you run your business from home, a trip from home for business purposes, such as to a client, can count. Trips between client sites, to pick up supplies or to a second job can count too.</div>
+      </li>
+      <li class="faq-item">
+        <button class="faq-btn" onclick="toggleFaq(this)">
+          Can I claim more than one car?
+          <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="faq-answer">Yes. The 5,000 km limit applies to each car separately, and you can use a different method for each car. You can also switch methods from one year to the next.</div>
+      </li>
+    </ul>
+  </div>
+</section>
+
+<div class="cta-section">
+  <div class="inner">
+    <div class="cta-box">
+      <h2>Fuel and servicing receipts add up</h2>
+      <p>Scan them with Instant Receipts and they are filed for you. 30 scans a month are free.</p>
+      <a href="https://instantreceipts.com.au/signup" class="btn-yellow" target="_blank" rel="noopener">
+        Try 30 scans for free →
+      </a>
+      <p class="sub">No credit card required</p>
+    </div>
+  </div>
+</div>
+
+<footer class="site-footer">
+  <div class="footer-links">
+    <a href="index.html">All tools</a>
+    <a href="gst-calculator.html">GST Calculator</a>
+    <a href="bas-calculator.html">BAS Calculator</a>
+    <a href="sole-trader-tax-calculator.html">Sole Trader Tax Calculator</a>
+    <a href="work-from-home-calculator.html">Work From Home Calculator</a>
+    <a href="invoice-generator.html">Invoice Generator</a>
+  </div>
+  <p>
+    Full-featured receipt scanning, expense tracking and BAS preparation at
+    <a href="https://instantreceipts.com.au" target="_blank" rel="noopener"><strong>instantreceipts.com.au</strong></a>
+  </p>
+  <p style="margin-top:8px;">© 2024 Instant Receipts. Free tools — no signup required.</p>
+</footer>
+
+<script>
+  const RATES = {
+    '2026-27': 0.91,
+    '2025-26': 0.88,
+    '2024-25': 0.88,
+    '2023-24': 0.85,
+    '2022-23': 0.78
+  };
+  const MAX_KM = 5000;
+
+  function aud(n) { return n.toLocaleString('en-AU', { style: 'currency', currency: 'AUD' }); }
+  function fmtKm(n) { return n.toLocaleString('en-AU') + ' km'; }
+  function round2(n) { return Math.round(n * 100) / 100; }
+
+  function calcMileage() {
+    const km       = Math.max(0, parseFloat(document.getElementById('km-amount').value) || 0);
+    const yearEl   = document.getElementById('km-year');
+    const year     = yearEl.value;
+    const rate     = RATES[year] || 0.91;
+    const costs    = Math.max(0, parseFloat(document.getElementById('car-costs').value) || 0);
+    const bizPct   = Math.min(100, Math.max(0, parseFloat(document.getElementById('biz-use').value) || 0));
+
+    const kmResult = document.getElementById('km-result');
+    const lbResult = document.getElementById('logbook-result');
+
+    if (km <= 0) {
+      kmResult.classList.add('hidden');
+    } else {
+      const claimable   = Math.min(km, MAX_KM);
+      const deduction   = round2(claimable * rate);
+      const overLimit   = km > MAX_KM;
+
+      document.getElementById('km-claimable').textContent  = fmtKm(claimable);
+      document.getElementById('km-rate-label').textContent = 'Rate for ' + year;
+      document.getElementById('km-result').querySelector('.value-green').textContent = Math.round(rate * 100) + ' cents per km';
+      document.getElementById('km-deduction').textContent  = aud(deduction);
+      document.getElementById('km-over-note').classList.toggle('hidden', !overLimit);
+
+      kmResult.classList.remove('hidden');
+
+      // Logbook comparison
+      if (costs > 0 && bizPct > 0) {
+        const lbDeduction = round2(costs * bizPct / 100);
+        document.getElementById('lb-deduction').textContent = aud(lbDeduction);
+        const diff = lbDeduction - deduction;
+        const note = document.getElementById('lb-compare');
+        if (diff > 0) {
+          note.textContent = 'The logbook method is higher by ' + aud(diff) + '. You need a 12 week logbook and receipts for your costs.';
+        } else {
+          note.textContent = 'Cents per km is higher by ' + aud(-diff) + ', and it needs no logbook or receipts for the costs.';
+        }
+        lbResult.classList.remove('hidden');
+      } else {
+        lbResult.classList.add('hidden');
+      }
+    }
+  }
+
+  function toggleFaq(btn) {
+    btn.closest('.faq-item').classList.toggle('open');
+  }
+</script>
+</body>
+</html>

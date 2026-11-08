@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sole Trader Tax Calculator (Australia): Income Tax, GST & Take-Home | Instant Receipts</title>
+  <meta name="description" content="Free Australian sole trader tax calculator. Enter your income, expenses and HELP debt to estimate your income tax, Medicare levy, HELP repayment, GST to set aside and your take-home pay." />
+  <link rel="canonical" href="https://instantreceipts.com.au/tools/sole-trader-tax-calculator" />
+  <link rel="stylesheet" href="shared.css" />
+  <style>
+    .inputs-card {
+      border: 2px solid var(--brand-yellow);
+      background: rgba(253,231,179,0.3);
+      border-radius: 16px;
+      padding: 24px;
+    }
+    .results-card {
+      border: 2px solid rgba(99,163,97,0.3);
+      background: #fff;
+      border-radius: 16px;
+      padding: 24px;
+    }
+    .calc-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 32px;
+      max-width: 900px;
+    }
+    @media (max-width: 700px) { .calc-grid { grid-template-columns: 1fr; } }
+    .results-empty {
+      border: 2px dashed #e5e7eb;
+      border-radius: 16px;
+      padding: 40px 24px;
+      text-align: center;
+      font-size: 14px;
+      color: var(--brand-brown-60);
+    }
+    .result-year-note { font-size: 12px; color: var(--brand-brown-60); margin-bottom: 8px; }
+    .checkbox-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 14px;
+      cursor: pointer;
+    }
+    .checkbox-row input { width: 16px; height: 16px; accent-color: var(--brand-green); }
+  </style>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "Sole Trader Tax Calculator",
+    "applicationCategory": "FinanceApplication",
+    "operatingSystem": "Web",
+    "url": "https://instantreceipts.com.au/tools/sole-trader-tax-calculator",
+    "description": "Free Australian sole trader tax calculator. Estimate income tax, Medicare levy, HELP repayment and take-home pay.",
+    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "AUD" },
+    "provider": { "@type": "Organization", "name": "Instant Receipts", "url": "https://instantreceipts.com.au" }
+  }
+  </script>
+</head>
+<body>
+
+<nav class="site-nav">
+  <div class="inner">
+    <a class="brand" href="index.html">🧾 Instant Receipts Tools</a>
+    <ul class="nav-links">
+      <li><a href="gst-calculator.html">GST</a></li>
+      <li><a href="bas-calculator.html">BAS</a></li>
+      <li><a href="sole-trader-tax-calculator.html">Tax</a></li>
+      <li><a href="mileage-calculator.html">Mileage</a></li>
+      <li><a href="work-from-home-calculator.html">WFH</a></li>
+      <li><a href="invoice-generator.html">Invoice</a></li>
+    </ul>
+  </div>
+</nav>
+
+<div class="hero">
+  <div class="inner">
+    <h1>Sole trader tax calculator</h1>
+    <p class="subtitle">
+      A rough estimate of what you will owe in income tax, Medicare levy and HELP repayment,
+      plus the GST to set aside, and how much of your income you keep.
+    </p>
+
+    <div class="calc-grid">
+      <!-- Inputs -->
+      <div class="inputs-card">
+        <div class="field-row">
+          <label>Financial year</label>
+          <div class="toggle-group">
+            <button class="toggle-btn active" id="yr-2025" onclick="setYear('2025-26')">2025-26</button>
+            <button class="toggle-btn" id="yr-2026" onclick="setYear('2026-27')">2026-27</button>
+          </div>
+        </div>
+
+        <div class="field-row">
+          <label for="st-income">Sole trader income (this year)</label>
+          <div class="input-wrap">
+            <span class="prefix">$</span>
+            <input type="number" id="st-income" min="0" placeholder="0" oninput="calcTax()" />
+          </div>
+        </div>
+
+        <div class="field-row">
+          <label for="st-gst">GST</label>
+          <select id="st-gst" onchange="calcTax()">
+            <option value="none">Not registered for GST</option>
+            <option value="exclusive">Registered, income figure excludes GST</option>
+            <option value="inclusive">Registered, income figure includes GST</option>
+          </select>
+        </div>
+
+        <div class="field-row">
+          <label for="st-exp">Business expenses / deductions</label>
+          <div class="input-wrap">
+            <span class="prefix">$</span>
+            <input type="number" id="st-exp" min="0" placeholder="0" oninput="calcTax()" />
+          </div>
+        </div>
+
+        <div class="field-row">
+          <label for="st-salary">Salary / wages income <span style="font-weight:400; color:var(--brand-brown-60)">(optional)</span></label>
+          <div class="input-wrap">
+            <span class="prefix">$</span>
+            <input type="number" id="st-salary" min="0" placeholder="0" oninput="calcTax()" />
+          </div>
+        </div>
+
+        <div class="field-row">
+          <label for="st-super">Personal super contribution <span style="font-weight:400; color:var(--brand-brown-60)">(optional, deductible)</span></label>
+          <div class="input-wrap">
+            <span class="prefix">$</span>
+            <input type="number" id="st-super" min="0" placeholder="0" oninput="calcTax()" />
+          </div>
+        </div>
+
+        <label class="checkbox-row">
+          <input type="checkbox" id="st-help" onchange="calcTax()" />
+          I have a HELP / HECS / study loan
+        </label>
+      </div>
+
+      <!-- Results -->
+      <div>
+        <div id="results-empty" class="results-empty">
+          Enter your income to see the estimate.
+        </div>
+        <div id="results-card" class="results-card hidden">
+          <p class="result-year-note" id="res-year-note">Estimated for 2025-26</p>
+          <table class="breakdown">
+            <tbody id="res-breakdown"></tbody>
+          </table>
+          <div class="highlight-box">
+            <div class="hl-row">
+              <span class="hl-label">Set aside from your income</span>
+              <span class="hl-value" id="res-set-aside">$0</span>
+            </div>
+            <p class="hl-note" id="res-set-aside-pct"></p>
+          </div>
+          <div style="display:flex; justify-content:space-between; align-items:baseline; margin-top:16px; padding-top:16px; border-top:1px solid #f3f4f6;">
+            <span style="font-weight:700">Estimated take-home</span>
+            <span style="font-weight:700; font-size:18px;" id="res-take-home">$0</span>
+          </div>
+          <p style="font-size:12px; color:var(--brand-brown-60); margin-top:4px;" id="res-eff-rate"></p>
+          <div id="res-gst-warning" class="warning-box hidden"></div>
+        </div>
+
+        <p style="font-size:13px; color:var(--brand-brown-70); margin-top:16px; line-height:1.6;">
+          Estimate only, for Australian tax residents. Uses ATO rates for the year selected, including the
+          Small Business Income Tax Offset (16%, capped at $1,000). Excludes Medicare levy surcharge,
+          non-commercial loss rules and PSI rules. This is not tax advice. Check
+          <a href="https://www.ato.gov.au" target="_blank" rel="noopener noreferrer">ato.gov.au</a> or your accountant.
+        </p>
+      </div>
+    </div>
+
+    <div class="related-links" style="max-width:900px">
+      <a href="gst-calculator.html">GST calculator</a>
+      <a href="bas-calculator.html">BAS calculator</a>
+      <a href="invoice-generator.html">Invoice generator</a>
+      <a href="https://instantreceipts.com.au/blog/sole-trader-tax-deductions-australia" target="_blank" rel="noopener">Sole trader tax deductions</a>
+    </div>
+  </div>
+</div>
+
+<section class="section bg-gray">
+  <div class="inner">
+    <h2>Sole trader tax questions</h2>
+    <ul class="faq-list">
+      <li class="faq-item">
+        <button class="faq-btn" onclick="toggleFaq(this)">
+          How much tax does a sole trader pay in Australia?
+          <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="faq-answer">A sole trader pays income tax at the individual resident rates on their net profit (income minus deductible expenses), plus the 2% Medicare levy, plus any HELP or HECS repayment, less the Small Business Income Tax Offset (16%, capped at $1,000). There is no separate company tax. Business profit is taxed as your personal income. If your business turnover is $75,000 or more you also register for and collect GST, which you pass on to the ATO each BAS.</div>
+      </li>
+      <li class="faq-item">
+        <button class="faq-btn" onclick="toggleFaq(this)">
+          What is the Small Business Income Tax Offset?
+          <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="faq-answer">A tax offset worth 16% of the tax on your net small business income, capped at $1,000 a year. This calculator applies it automatically. It scales down if part of your taxable income is salary or wages rather than business profit, and it phases out entirely once aggregated turnover reaches $5 million.</div>
+      </li>
+      <li class="faq-item">
+        <button class="faq-btn" onclick="toggleFaq(this)">
+          How much should I set aside for tax?
+          <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="faq-answer">A common rule of thumb is 25% to 35% of every payment, but the right figure depends on your total income and deductions. The calculator works out a set-aside percentage for your numbers. If you are registered for GST, set aside the GST portion (roughly 1/11 of GST-inclusive income) on top of that.</div>
+      </li>
+      <li class="faq-item">
+        <button class="faq-btn" onclick="toggleFaq(this)">
+          Do I pay GST as a sole trader?
+          <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="faq-answer">Only if your GST turnover is $75,000 or more over 12 months, or you provide taxi or rideshare services. GST you charge customers is collected on the ATO's behalf and paid over each BAS. It does not reduce your income tax, and you can claim back the GST on your business purchases.</div>
+      </li>
+      <li class="faq-item">
+        <button class="faq-btn" onclick="toggleFaq(this)">
+          What are PAYG instalments, and do I need to pay them?
+          <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="faq-answer">PAYG instalments are prepayments toward your next income tax bill, usually paid quarterly. The ATO automatically enters you into the system after a tax return where your instalment income is $4,000 or more, tax payable is $1,000 or more, and estimated tax is $500 or more. It doesn't change how much tax you owe overall, just when you pay it.</div>
+      </li>
+      <li class="faq-item">
+        <button class="faq-btn" onclick="toggleFaq(this)">
+          Are my business expenses tax deductible?
+          <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="faq-answer">Yes. Expenses directly related to earning your business income are generally deductible, provided you keep a record of each one. Common deductions include home office costs, vehicle expenses, equipment, subscriptions, professional development, and accounting fees.</div>
+      </li>
+    </ul>
+  </div>
+</section>
+
+<div class="cta-section">
+  <div class="inner">
+    <div class="cta-box">
+      <h2>Every receipt lowers that set-aside figure</h2>
+      <p>Instant Receipts scans your receipts as you go, sorts them into ATO categories, and keeps your GST and BAS figures ready to lodge.</p>
+      <a href="https://instantreceipts.com.au/signup" class="btn-yellow" target="_blank" rel="noopener">
+        Try 30 scans for free →
+      </a>
+      <p class="sub">No credit card required</p>
+    </div>
+  </div>
+</div>
+
+<footer class="site-footer">
+  <div class="footer-links">
+    <a href="index.html">All tools</a>
+    <a href="gst-calculator.html">GST Calculator</a>
+    <a href="bas-calculator.html">BAS Calculator</a>
+    <a href="mileage-calculator.html">Mileage Calculator</a>
+    <a href="work-from-home-calculator.html">Work From Home Calculator</a>
+    <a href="invoice-generator.html">Invoice Generator</a>
+  </div>
+  <p>
+    Full-featured receipt scanning, expense tracking and BAS preparation at
+    <a href="https://instantreceipts.com.au" target="_blank" rel="noopener"><strong>instantreceipts.com.au</strong></a>
+  </p>
+  <p style="margin-top:8px;">© 2024 Instant Receipts. Free tools — no signup required.</p>
+</footer>
+
+<script>
+const YEARS = {
+  '2025-26': {
+    brackets: [{upTo:18200,rate:0},{upTo:45000,rate:0.16},{upTo:135000,rate:0.30},{upTo:190000,rate:0.37},{upTo:Infinity,rate:0.45}],
+    medicareRate:0.02, medicareLower:28011, medicareUpper:35013,
+    lito:{max:700,fullUpTo:37500,t1End:45000,t1Rate:0.05,t2End:66667,t2Rate:0.015},
+    help:[{over:67000,upTo:125000,marginal:0.15,base:0},{over:125000,upTo:179285,marginal:0.17,base:8700},{over:179285,upTo:Infinity,flatOnTotal:0.10}],
+    gstThreshold:75000, superCap:30000
+  },
+  '2026-27': {
+    brackets: [{upTo:18200,rate:0},{upTo:45000,rate:0.15},{upTo:135000,rate:0.30},{upTo:190000,rate:0.37},{upTo:Infinity,rate:0.45}],
+    medicareRate:0.02, medicareLower:28011, medicareUpper:35013,
+    lito:{max:700,fullUpTo:37500,t1End:45000,t1Rate:0.05,t2End:66667,t2Rate:0.015},
+    help:[{over:69528,upTo:129717,marginal:0.15,base:0},{over:129717,upTo:185960,marginal:0.17,base:9028},{over:185960,upTo:Infinity,flatOnTotal:0.10}],
+    gstThreshold:75000, superCap:30000
+  }
+};
+
+let currentYear = '2025-26';
+
+function setYear(y) {
+  currentYear = y;
+  document.getElementById('yr-2025').classList.toggle('active', y === '2025-26');
+  document.getElementById('yr-2026').classList.toggle('active', y === '2026-27');
+  calcTax();
+}
+
+function incomeTax(taxable, brackets) {
+  let tax = 0, last = 0;
+  for (const b of brackets) {
+    if (taxable <= last) break;
+    tax += (Math.min(taxable, b.upTo) - last) * b.rate;
+    last = b.upTo;
+  }
+  return tax;
+}
+
+function litoCalc(taxable, p) {
+  if (taxable <= p.fullUpTo) return p.max;
+  if (taxable <= p.t1End) return p.max - (taxable - p.fullUpTo) * p.t1Rate;
+  if (taxable <= p.t2End) return p.max - (p.t1End - p.fullUpTo) * p.t1Rate - (taxable - p.t1End) * p.t2Rate;
+  return 0;
+}
+
+function medicareLevy(taxable, y) {
+  if (taxable <= y.medicareLower) return 0;
+  if (taxable >= y.medicareUpper) return taxable * y.medicareRate;
+  return (taxable - y.medicareLower) * 0.10;
+}
+
+function helpRepayment(ri, bands) {
+  for (const band of bands) {
+    if (ri > band.over && ri <= band.upTo) {
+      if (band.flatOnTotal) return ri * band.flatOnTotal;
+      return (band.base || 0) + (ri - band.over) * band.marginal;
+    }
+  }
+  const top = bands[bands.length - 1];
+  if (top.flatOnTotal && ri > top.over) return ri * top.flatOnTotal;
+  return 0;
+}
+
+function money(v) { return Math.round(v).toLocaleString('en-AU', {style:'currency', currency:'AUD', maximumFractionDigits:0}); }
+function pct(v) { return (v * 100).toLocaleString('en-AU', {maximumFractionDigits:1}) + '%'; }
+function round2(n) { return Math.round(n * 100) / 100; }
+
+function calcTax() {
+  const y       = YEARS[currentYear];
+  const sole    = Math.max(0, parseFloat(document.getElementById('st-income').value) || 0);
+  const salary  = Math.max(0, parseFloat(document.getElementById('st-salary').value) || 0);
+  const exp     = Math.max(0, parseFloat(document.getElementById('st-exp').value) || 0);
+  const superAmt = Math.min(Math.max(0, parseFloat(document.getElementById('st-super').value) || 0), y.superCap);
+  const gstMode = document.getElementById('st-gst').value;
+  const hasHelp = document.getElementById('st-help').checked;
+
+  const empty  = document.getElementById('results-empty');
+  const card   = document.getElementById('results-card');
+
+  if (sole === 0 && salary === 0) {
+    empty.classList.remove('hidden');
+    card.classList.add('hidden');
+    return;
+  }
+  empty.classList.add('hidden');
+  card.classList.remove('hidden');
+
+  let assessable = sole, deductible = exp, gstToRemit = 0;
+  if (gstMode === 'inclusive') {
+    assessable = sole / 1.1;
+    deductible = exp / 1.1;
+    gstToRemit = Math.max(0, sole / 11 - exp / 11);
+  }
+
+  const netBiz  = Math.max(0, assessable - deductible - superAmt);
+  const taxable = netBiz + salary;
+  const gross   = incomeTax(taxable, y.brackets);
+  const offset  = Math.max(0, litoCalc(taxable, y.lito));
+  const sbito   = taxable > 0 ? Math.min(1000, gross * 0.16 * (netBiz / taxable)) : 0;
+  const tax     = Math.max(0, gross - offset - sbito);
+  const medicare = medicareLevy(taxable, y);
+  const help    = hasHelp ? helpRepayment(taxable, y.help) : 0;
+  const totalTax = tax + medicare + help;
+
+  const salaryTax = salary > 0
+    ? Math.max(0, incomeTax(salary, y.brackets) - Math.max(0, litoCalc(salary, y.lito))) + medicareLevy(salary, y)
+    : 0;
+  const setAside = Math.max(0, totalTax - salaryTax) + gstToRemit;
+  const takeHome = sole - exp - setAside + Math.max(0, salary - salaryTax);
+  const effRate  = taxable > 0 ? totalTax / taxable : 0;
+  const setAsidePct = sole > 0 ? setAside / sole : 0;
+
+  // Build breakdown rows
+  const tbody = document.getElementById('res-breakdown');
+  tbody.innerHTML = '';
+
+  function row(label, val, cls) {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `<td class="${cls||''}">${label}</td><td>${val}</td>`;
+    return tr;
+  }
+  tbody.appendChild(row('Taxable income', money(taxable)));
+  tbody.appendChild(row('Income tax', money(gross)));
+  if (offset > 0) tbody.appendChild(row('Less low income tax offset', '− ' + money(offset), 'positive'));
+  if (sbito > 0)  tbody.appendChild(row('Less small business income tax offset', '− ' + money(sbito), 'positive'));
+  tbody.appendChild(row('Medicare levy (2%)', money(medicare)));
+  if (help > 0) tbody.appendChild(row('HELP repayment', money(help)));
+
+  // totals separator
+  const sep = document.createElement('tr');
+  sep.innerHTML = `<td colspan="2" style="padding:0"><hr style="border:none;border-top:1px solid #e5e7eb;margin:6px 0"></td>`;
+  tbody.appendChild(sep);
+
+  const totRow = document.createElement('tr');
+  totRow.className = 'total-row';
+  totRow.innerHTML = `<td>Total tax</td><td>${money(totalTax)}</td>`;
+  tbody.appendChild(totRow);
+
+  if (gstToRemit > 0) {
+    tbody.appendChild(row('GST to set aside', money(gstToRemit)));
+  }
+
+  document.getElementById('res-year-note').textContent = 'Estimated for ' + currentYear;
+  document.getElementById('res-set-aside').textContent = money(setAside);
+  document.getElementById('res-set-aside-pct').textContent = "That's about " + pct(setAsidePct) + " of every payment you receive.";
+  document.getElementById('res-take-home').textContent = money(takeHome);
+  document.getElementById('res-eff-rate').textContent = 'Effective tax rate: ' + pct(effRate);
+
+  const warn = document.getElementById('res-gst-warning');
+  if (sole > y.gstThreshold && gstMode === 'none') {
+    warn.textContent = 'Your income is over the $75,000 GST turnover threshold, so you probably need to register for GST.';
+    warn.classList.remove('hidden');
+  } else {
+    warn.classList.add('hidden');
+  }
+}
+
+function toggleFaq(btn) {
+  btn.closest('.faq-item').classList.toggle('open');
+}
+</script>
+</body>
+</html>

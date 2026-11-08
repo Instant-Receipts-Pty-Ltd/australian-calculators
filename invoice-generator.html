@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Free Invoice & Receipt Generator, Tax Invoice Template Australia | Instant Receipts</title>
+  <meta name="description" content="Free tax invoice template and invoice generator for Australian businesses. No signup needed. Add your ABN and GST per line, make an invoice or receipt, and print to PDF." />
+  <link rel="canonical" href="https://instantreceipts.com.au/tools/invoice-generator" />
+  <link rel="stylesheet" href="shared.css" />
+  <style>
+    /* Invoice document styles */
+    .invoice-wrap {
+      display: grid;
+      grid-template-columns: 1fr 320px;
+      gap: 24px;
+      max-width: 1100px;
+    }
+    @media (max-width: 860px) { .invoice-wrap { grid-template-columns: 1fr; } }
+
+    .invoice-doc {
+      border: 1px solid #e5e7eb;
+      border-radius: 12px;
+      background: #fff;
+      padding: 40px;
+      font-size: 14px;
+    }
+
+    /* Inline editable fields */
+    .f {
+      width: 100%;
+      border: none;
+      border-bottom: 1px solid #d1d5db;
+      padding: 4px 6px;
+      font-size: 14px;
+      background: transparent;
+      color: var(--brand-brown);
+      outline: none;
+    }
+    .f:hover { border-bottom-color: #9ca3af; }
+    .f:focus { border-bottom-color: var(--brand-green); background: rgba(99,163,97,0.04); }
+    .f-lg { font-size: 18px; font-weight: 700; }
+    .f::placeholder { color: #9ca3af; }
+
+    .inv-head { display: flex; gap: 32px; align-items: flex-start; margin-bottom: 32px; }
+    .inv-biz { flex: 1; }
+    .inv-biz-row { display: flex; align-items: center; margin-bottom: 4px; }
+    .inv-biz-row label { width: 70px; font-size: 12px; color: var(--brand-brown-70); flex-shrink: 0; }
+
+    .inv-title { font-size: 28px; font-weight: 700; margin-bottom: 16px; }
+    .inv-meta { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 32px; }
+    .inv-meta-row { display: flex; align-items: center; gap: 6px; min-width: 200px; }
+    .inv-meta-row label { font-size: 12px; color: var(--brand-brown-70); white-space: nowrap; }
+    .inv-meta-row .f { min-width: 120px; }
+
+    .inv-section-title { font-size: 12px; font-weight: 700; margin-bottom: 8px; padding-top: 16px; border-top: 1px solid #e5e7eb; }
+
+    .line-table { width: 100%; border-collapse: collapse; font-size: 13px; margin-bottom: 8px; }
+    .line-table th { text-align: left; padding: 6px 4px; font-size: 11px; border-bottom: 1px solid #e5e7eb; color: var(--brand-brown-70); }
+    .line-table th:last-child, .line-table td:last-child { text-align: right; }
+    .line-table td { padding: 4px 4px; border-bottom: 1px solid #f9fafb; vertical-align: top; }
+    .line-table .f { padding: 3px 4px; }
+    .line-table .remove-btn {
+      background: none; border: none; color: #d1d5db; cursor: pointer; padding: 2px 4px; font-size: 16px;
+    }
+    .line-table .remove-btn:hover { color: #dc2626; }
+    .add-line-btn {
+      background: none; border: none; color: var(--brand-green); font-size: 13px; font-weight: 700;
+      cursor: pointer; padding: 4px 0; display: flex; align-items: center; gap: 4px;
+    }
+    .add-line-btn:hover { color: var(--brand-brown); }
+
+    .inv-totals { text-align: right; margin-top: 8px; }
+    .inv-totals table { margin-left: auto; font-size: 14px; }
+    .inv-totals td { padding: 3px 8px; }
+    .inv-totals td:last-child { font-weight: 500; }
+    .inv-totals .total-row td { font-size: 16px; font-weight: 700; border-top: 1px solid #e5e7eb; padding-top: 8px; }
+    .inv-totals .gst-note { font-size: 11px; color: var(--brand-brown-70); }
+
+    .inv-footer { margin-top: 24px; padding-top: 12px; border-top: 1px solid #e5e7eb; font-size: 11px; color: #9ca3af; text-align: center; }
+
+    /* Controls sidebar */
+    .inv-controls { display: flex; flex-direction: column; gap: 16px; }
+    .control-card { border: 1px solid #e5e7eb; border-radius: 12px; padding: 16px; background: #fff; }
+    .control-card h3 { font-size: 14px; font-weight: 700; margin-bottom: 12px; }
+
+    /* Mode toggle */
+    .mode-toggle { display: flex; gap: 8px; }
+    .mode-btn { flex: 1; padding: 8px; border-radius: 8px; font-size: 13px; font-weight: 500; border: 1.5px solid var(--brand-yellow); background: #fff; color: var(--brand-brown); cursor: pointer; transition: all 0.15s; }
+    .mode-btn.active { background: var(--brand-green); color: #fff; border-color: var(--brand-green); }
+
+    /* Checklist */
+    .checklist { list-style: none; }
+    .checklist li { display: flex; align-items: flex-start; gap: 8px; font-size: 13px; padding: 4px 0; }
+    .checklist li .ck-icon { flex-shrink: 0; width: 16px; height: 16px; margin-top: 1px; }
+    .checklist li.ok { color: var(--brand-brown); }
+    .checklist li.bad { color: var(--brand-brown-60); }
+
+    .print-btn {
+      width: 100%;
+      padding: 12px;
+      background: var(--brand-green);
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    .print-btn:hover { background: #4e8a4c; }
+
+    .gst-select { padding: 3px 4px; border: 1px solid #e5e7eb; border-radius: 4px; font-size: 12px; background: #fff; color: var(--brand-brown); }
+
+    @media print {
+      .site-nav, .inv-controls, .inv-page > * + *, .hero > .inner > *:not(.invoice-wrap),
+      .add-line-btn, .remove-btn, .section, .cta-section, .site-footer,
+      .related-links, .hero::before { display: none !important; }
+      .hero { padding: 0 !important; background: none !important; }
+      .invoice-wrap { grid-template-columns: 1fr !important; }
+      .invoice-doc { border: none !important; padding: 0 !important; box-shadow: none !important; }
+      .f { border-bottom: none !important; }
+      .inv-footer { display: block !important; }
+    }
+  </style>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "Free Invoice and Receipt Generator Australia",
+    "applicationCategory": "BusinessApplication",
+    "operatingSystem": "Web",
+    "url": "https://instantreceipts.com.au/tools/invoice-generator",
+    "description": "Free tax invoice template and invoice generator for Australian businesses. No signup needed.",
+    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "AUD" },
+    "provider": { "@type": "Organization", "name": "Instant Receipts", "url": "https://instantreceipts.com.au" }
+  }
+  </script>
+</head>
+<body>
+
+<nav class="site-nav">
+  <div class="inner">
+    <a class="brand" href="index.html">🧾 Instant Receipts Tools</a>
+    <ul class="nav-links">
+      <li><a href="gst-calculator.html">GST</a></li>
+      <li><a href="bas-calculator.html">BAS</a></li>
+      <li><a href="sole-trader-tax-calculator.html">Tax</a></li>
+      <li><a href="mileage-calculator.html">Mileage</a></li>
+      <li><a href="work-from-home-calculator.html">WFH</a></li>
+      <li><a href="invoice-generator.html">Invoice</a></li>
+    </ul>
+  </div>
+</nav>
+
+<div class="hero">
+  <div class="inner">
+    <div style="max-width:700px; margin-bottom:20px;">
+      <h1>Free Invoice and Receipt Generator</h1>
+      <p class="subtitle" style="margin-bottom:0">
+        A free tax invoice template for Australian businesses. No signup needed — fill in the fields below and click
+        Download PDF (in print window, choose "Save as PDF").
+      </p>
+    </div>
+
+    <div class="invoice-wrap">
+      <!-- Document -->
+      <div class="invoice-doc" id="invoice-doc">
+        <!-- Header -->
+        <div class="inv-head">
+          <div class="inv-biz">
+            <input class="f f-lg" id="seller-name" placeholder="Your business name" />
+            <div class="inv-biz-row"><label>ABN:</label><input class="f" id="seller-abn" placeholder="12 345 678 901" /></div>
+            <div class="inv-biz-row"><label>Address:</label><input class="f" id="seller-address" placeholder="Street, suburb, state, postcode" /></div>
+            <div class="inv-biz-row"><label>Email:</label><input class="f" id="seller-email" placeholder="name@example.com" /></div>
+            <div class="inv-biz-row"><label>Phone:</label><input class="f" id="seller-phone" placeholder="04xx xxx xxx" /></div>
+          </div>
+        </div>
+
+        <!-- Title + meta -->
+        <div class="inv-title" id="inv-title-text">Tax Invoice</div>
+        <div class="inv-meta">
+          <div class="inv-meta-row">
+            <label id="inv-num-label">Invoice No:</label>
+            <input class="f" id="inv-number" value="INV-0001" style="width:130px" />
+          </div>
+          <div class="inv-meta-row">
+            <label id="inv-date-label">Date:</label>
+            <input class="f" id="inv-date" type="date" style="width:150px" />
+          </div>
+          <div class="inv-meta-row" id="due-row">
+            <label>Due date:</label>
+            <input class="f" id="inv-due" type="date" style="width:150px" />
+          </div>
+          <div class="inv-meta-row" id="method-row" style="display:none">
+            <label>Method:</label>
+            <input class="f" id="inv-method" placeholder="Card, cash, transfer" style="width:150px" />
+          </div>
+        </div>
+
+        <!-- Customer -->
+        <p class="inv-section-title" id="bill-to-label">Bill to</p>
+        <div style="margin-bottom:24px;">
+          <input class="f f-lg" id="buyer-name" placeholder="Customer name" />
+          <div class="inv-biz-row"><label>ABN:</label><input class="f" id="buyer-abn" placeholder="(optional)" /></div>
+          <div class="inv-biz-row"><label>Address:</label><input class="f" id="buyer-address" placeholder="(optional)" /></div>
+        </div>
+
+        <!-- Line items -->
+        <p class="inv-section-title">Items</p>
+        <table class="line-table" id="lines-table">
+          <thead>
+            <tr>
+              <th style="width:40%">Description</th>
+              <th style="width:10%">Qty</th>
+              <th style="width:15%">Price</th>
+              <th style="width:15%" id="gst-col-head">GST</th>
+              <th style="width:15%">Amount</th>
+              <th style="width:5%"></th>
+            </tr>
+          </thead>
+          <tbody id="lines-body"></tbody>
+        </table>
+        <button class="add-line-btn" onclick="addLine()">+ Add a line</button>
+
+        <!-- Totals -->
+        <div class="inv-totals" id="inv-totals"></div>
+
+        <!-- Notes -->
+        <div style="margin-top:24px; padding-top:16px; border-top:1px solid #e5e7eb;">
+          <input class="f" id="inv-notes" placeholder="Notes (optional)" />
+        </div>
+
+        <!-- Bank details (invoice only) -->
+        <div id="bank-section" style="margin-top:16px;">
+          <p class="inv-section-title">Payment details</p>
+          <div class="inv-biz-row"><label>Bank:</label><input class="f" id="bank-name" placeholder="Bank name (optional)" /></div>
+          <div class="inv-biz-row"><label>BSB:</label><input class="f" id="bank-bsb" placeholder="123-456 (optional)" /></div>
+          <div class="inv-biz-row"><label>Account:</label><input class="f" id="bank-account" placeholder="Account number (optional)" /></div>
+          <div class="inv-biz-row"><label>Name:</label><input class="f" id="bank-acname" placeholder="Account name (optional)" /></div>
+        </div>
+
+        <div class="inv-footer">
+          <a href="https://instantreceipts.com.au/tools/invoice-generator" target="_blank" rel="noopener">https://instantreceipts.com.au/tools/invoice-generator</a>
+        </div>
+      </div>
+
+      <!-- Controls sidebar -->
+      <div class="inv-controls">
+        <div class="control-card">
+          <h3>Document type</h3>
+          <div class="mode-toggle">
+            <button class="mode-btn active" id="mode-invoice" onclick="setMode('invoice')">Tax Invoice</button>
+            <button class="mode-btn" id="mode-receipt" onclick="setMode('receipt')">Receipt</button>
+          </div>
+          <div style="margin-top:12px;">
+            <label class="checkbox-row" style="font-size:13px;">
+              <input type="checkbox" id="gst-registered" checked onchange="updateTotals()" />
+              Registered for GST
+            </label>
+          </div>
+        </div>
+
+        <!-- Checklist (invoice + gst only) -->
+        <div class="control-card" id="checklist-card">
+          <h3>Invoice checklist</h3>
+          <ul class="checklist" id="checklist"></ul>
+          <p style="font-size:12px; color:var(--brand-brown-70); margin-top:8px;">
+            See <a href="https://instantreceipts.com.au/blog/create-gst-compliant-receipts" target="_blank" rel="noopener">GST-compliant receipts guide</a> for details.
+          </p>
+        </div>
+
+        <div class="control-card">
+          <h3>Download as PDF</h3>
+          <p style="font-size:13px; color:var(--brand-brown-70); margin-bottom:12px;">
+            Click the button below, then choose <strong>Save as PDF</strong> as the printer in the print dialog.
+          </p>
+          <button class="print-btn" onclick="window.print()">
+            📥 Download PDF
+          </button>
+        </div>
+
+        <div class="control-card" style="background:rgba(253,231,179,0.3); border-color:rgba(255,197,15,0.6)">
+          <p style="font-size:13px; font-weight:700; margin-bottom:6px;">Want to track if this gets paid?</p>
+          <p style="font-size:12px; color:var(--brand-brown-70); margin-bottom:12px; line-height:1.5">
+            Add your invoices to Instant Receipts and it matches them to the payments in your bank account.
+          </p>
+          <a href="https://instantreceipts.com.au/signup" class="btn-green" target="_blank" rel="noopener" style="font-size:13px; padding:8px 14px;">
+            Sign up free →
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div class="related-links" style="max-width:1100px; margin-top:24px;">
+      <a href="gst-calculator.html">GST calculator</a>
+      <a href="bas-calculator.html">BAS calculator</a>
+      <a href="https://instantreceipts.com.au/blog/create-gst-compliant-receipts" target="_blank" rel="noopener">How to create GST-compliant receipts</a>
+    </div>
+  </div>
+</div>
+
+<section class="section">
+  <div class="inner">
+    <h2>Invoice and receipt generator: frequently asked questions</h2>
+    <ul class="faq-list">
+      <li class="faq-item">
+        <button class="faq-btn" onclick="toggleFaq(this)">
+          Is this invoice generator really free, and do I need to sign up?
+          <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="faq-answer">It is free and there is no signup. You do not need an account or an email address. Fill in the document above and click Download PDF, then choose Save as PDF in the print dialog.</div>
+      </li>
+      <li class="faq-item">
+        <button class="faq-btn" onclick="toggleFaq(this)">
+          Do you save what I type?
+          <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="faq-answer">Not on our servers. What you type stays in your browser only and is gone when you close the page. Nothing is sent anywhere.</div>
+      </li>
+      <li class="faq-item">
+        <button class="faq-btn" onclick="toggleFaq(this)">
+          What do the GST options on each line do?
+          <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="faq-answer">Each line can be GST exclusive (10% is added to the price you type), GST inclusive (the price you type already includes GST) or No GST. If you are not registered for GST, untick the box and none is charged.</div>
+      </li>
+      <li class="faq-item">
+        <button class="faq-btn" onclick="toggleFaq(this)">
+          Can sole traders and freelancers use this invoice template?
+          <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="faq-answer">Yes. Sole traders, freelancers and tradies can use it. Enter your name or business name and your ABN. Leave the document title as "Tax Invoice" if you are registered for GST, or switch to "Invoice" by unticking the GST checkbox.</div>
+      </li>
+      <li class="faq-item">
+        <button class="faq-btn" onclick="toggleFaq(this)">
+          Which button do I press, Tax invoice or Receipt?
+          <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="faq-answer">Tax invoice asks for payment and shows payment terms. Receipt shows the date paid and payment method. Switch between them using the buttons in the sidebar.</div>
+      </li>
+    </ul>
+  </div>
+</section>
+
+<div class="cta-section">
+  <div class="inner">
+    <div class="cta-box">
+      <h2>Got a pile of receipts?</h2>
+      <p>Scan them with Instant Receipts and the GST and category are filled in for you.</p>
+      <a href="https://instantreceipts.com.au/signup" class="btn-yellow" target="_blank" rel="noopener">
+        Try 30 scans for free →
+      </a>
+      <p class="sub">No credit card required</p>
+    </div>
+  </div>
+</div>
+
+<footer class="site-footer">
+  <div class="footer-links">
+    <a href="index.html">All tools</a>
+    <a href="gst-calculator.html">GST Calculator</a>
+    <a href="bas-calculator.html">BAS Calculator</a>
+    <a href="sole-trader-tax-calculator.html">Sole Trader Tax Calculator</a>
+    <a href="mileage-calculator.html">Mileage Calculator</a>
+    <a href="work-from-home-calculator.html">Work From Home Calculator</a>
+  </div>
+  <p>
+    Full-featured receipt scanning, expense tracking and BAS preparation at
+    <a href="https://instantreceipts.com.au" target="_blank" rel="noopener"><strong>instantreceipts.com.au</strong></a>
+  </p>
+  <p style="margin-top:8px;">© 2024 Instant Receipts. Free tools — no signup required.</p>
+</footer>
+
+<script>
+let mode = 'invoice';
+let lines = [];
+let nextId = 1;
+
+function aud(n) { return n.toLocaleString('en-AU', { style: 'currency', currency: 'AUD' }); }
+function round2(n) { return Math.round(n * 100) / 100; }
+const isGst = () => document.getElementById('gst-registered').checked;
+
+function setMode(m) {
+  mode = m;
+  document.getElementById('mode-invoice').classList.toggle('active', m === 'invoice');
+  document.getElementById('mode-receipt').classList.toggle('active', m === 'receipt');
+
+  const title = m === 'invoice' ? (isGst() ? 'Tax Invoice' : 'Invoice') : 'Receipt';
+  document.getElementById('inv-title-text').textContent = title;
+  document.getElementById('inv-num-label').textContent = m === 'invoice' ? 'Invoice No:' : 'Receipt No:';
+  document.getElementById('inv-date-label').textContent = m === 'invoice' ? 'Date:' : 'Date paid:';
+  document.getElementById('bill-to-label').textContent = m === 'invoice' ? 'Bill to' : 'Received from';
+  document.getElementById('due-row').style.display = m === 'invoice' ? '' : 'none';
+  document.getElementById('method-row').style.display = m === 'receipt' ? '' : 'none';
+  document.getElementById('bank-section').style.display = m === 'invoice' ? '' : 'none';
+
+  renderChecklist();
+}
+
+function addLine() {
+  lines.push({ id: nextId++, desc: '', qty: 1, price: '', gst: 'excl' });
+  renderLines();
+}
+
+function removeLine(id) {
+  lines = lines.filter(l => l.id !== id);
+  if (lines.length === 0) addLine();
+  else renderLines();
+}
+
+function renderLines() {
+  const tbody = document.getElementById('lines-body');
+  const gstCol = document.getElementById('gst-col-head');
+  const registered = isGst();
+  gstCol.style.display = registered ? '' : 'none';
+
+  tbody.innerHTML = '';
+  lines.forEach(l => {
+    const tr = document.createElement('tr');
+    const gstSelect = registered ? `
+      <td>
+        <select class="gst-select" onchange="lines.find(x=>x.id===${l.id}).gst=this.value; updateTotals()">
+          <option value="excl" ${l.gst==='excl'?'selected':''}>Excl.</option>
+          <option value="incl" ${l.gst==='incl'?'selected':''}>Incl.</option>
+          <option value="none" ${l.gst==='none'?'selected':''}>No GST</option>
+        </select>
+      </td>` : '<td style="display:none"></td>';
+    tr.innerHTML = `
+      <td><input class="f" value="${escHtml(l.desc)}" placeholder="Description" oninput="lines.find(x=>x.id===${l.id}).desc=this.value; updateTotals()" /></td>
+      <td><input class="f" type="number" value="${l.qty}" min="0" step="any" style="text-align:right" oninput="lines.find(x=>x.id===${l.id}).qty=parseFloat(this.value)||0; updateTotals()" /></td>
+      <td><input class="f" type="number" value="${l.price}" min="0" step="0.01" placeholder="0.00" style="text-align:right" oninput="lines.find(x=>x.id===${l.id}).price=parseFloat(this.value)||0; updateTotals()" /></td>
+      ${gstSelect}
+      <td style="text-align:right; padding-top:8px;" id="amt-${l.id}">${aud(calcLineAmt(l))}</td>
+      <td><button class="remove-btn" onclick="removeLine(${l.id})">×</button></td>
+    `;
+    tbody.appendChild(tr);
+  });
+  updateTotals();
+}
+
+function escHtml(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+function calcLineAmt(l) {
+  const qty = parseFloat(l.qty) || 0;
+  const price = parseFloat(l.price) || 0;
+  const amount = qty * price;
+  if (!isGst() || l.gst === 'none') return round2(amount);
+  if (l.gst === 'incl') return round2(amount - amount / 11);
+  return round2(amount); // excl: net is just the amount
+}
+
+function calcLineGst(l) {
+  if (!isGst() || l.gst === 'none') return 0;
+  const qty = parseFloat(l.qty) || 0;
+  const price = parseFloat(l.price) || 0;
+  const amount = qty * price;
+  if (l.gst === 'incl') return round2(amount / 11);
+  return round2(amount * 0.1);
+}
+
+function updateTotals() {
+  // Update title if registered changed
+  const title = mode === 'receipt' ? 'Receipt' : (isGst() ? 'Tax Invoice' : 'Invoice');
+  document.getElementById('inv-title-text').textContent = title;
+
+  // Update each line amount
+  lines.forEach(l => {
+    const el = document.getElementById('amt-' + l.id);
+    if (el) el.textContent = aud(calcLineAmt(l));
+  });
+
+  const filled = lines.filter(l => l.desc.trim() || (parseFloat(l.price) > 0));
+  const subtotal = round2(filled.reduce((s, l) => s + calcLineAmt(l), 0));
+  const gst = round2(filled.reduce((s, l) => s + calcLineGst(l), 0));
+  const total = round2(subtotal + gst);
+
+  const totalsEl = document.getElementById('inv-totals');
+  const registered = isGst();
+  totalsEl.innerHTML = `
+    <table>
+      ${registered ? `<tr><td style="color:var(--brand-brown-70)">Subtotal (ex GST)</td><td>${aud(subtotal)}</td></tr>
+      <tr><td style="color:var(--brand-brown-70)">GST</td><td>${aud(gst)}</td></tr>` : ''}
+      <tr class="total-row"><td>${mode === 'receipt' ? 'Total paid' : 'Total'}</td><td>${aud(total)}</td></tr>
+      ${registered ? `<tr><td colspan="2" class="gst-note">Total includes GST of ${aud(gst)}</td></tr>` : ''}
+    </table>`;
+
+  renderChecklist();
+}
+
+function renderChecklist() {
+  const cl = document.getElementById('checklist');
+  const ccCard = document.getElementById('checklist-card');
+  if (mode === 'receipt' || !isGst()) { ccCard.style.display = 'none'; return; }
+  ccCard.style.display = '';
+
+  const sellerName = document.getElementById('seller-name').value.trim();
+  const sellerAbn  = document.getElementById('seller-abn').value.trim();
+  const invDate    = document.getElementById('inv-date').value;
+  const buyerName  = document.getElementById('buyer-name').value.trim();
+  const hasLines   = lines.some(l => l.desc.trim() && parseFloat(l.price) > 0);
+
+  const filled = lines.filter(l => l.desc.trim() || parseFloat(l.price) > 0);
+  const total  = round2(filled.reduce((s, l) => s + calcLineAmt(l) + calcLineGst(l), 0));
+
+  const items = [
+    { label: 'Says "Tax Invoice"', ok: isGst() && mode === 'invoice' },
+    { label: 'Your business name', ok: !!sellerName },
+    { label: 'Your ABN', ok: !!sellerAbn },
+    { label: 'Date of issue', ok: !!invDate },
+    { label: 'What you sold', ok: hasLines },
+    { label: 'GST amount shown', ok: hasLines },
+  ];
+  if (total >= 1000) items.push({ label: 'Customer name (sales ≥ $1,000)', ok: !!buyerName });
+
+  cl.innerHTML = items.map(item => `
+    <li class="${item.ok ? 'ok' : 'bad'}">
+      <svg class="ck-icon" viewBox="0 0 16 16" fill="none" stroke="${item.ok ? '#63A361' : '#d1d5db'}" stroke-width="2">
+        ${item.ok ? '<polyline points="2 8 6 12 14 4"/>' : '<circle cx="8" cy="8" r="6"/>'}
+      </svg>
+      ${item.label}
+    </li>`).join('');
+}
+
+function toggleFaq(btn) { btn.closest('.faq-item').classList.toggle('open'); }
+
+// Init
+document.addEventListener('DOMContentLoaded', () => {
+  // Set today's date
+  const today = new Date();
+  const pad = n => String(n).padStart(2, '0');
+  const iso = `${today.getFullYear()}-${pad(today.getMonth()+1)}-${pad(today.getDate())}`;
+  document.getElementById('inv-date').value = iso;
+
+  addLine();
+  setMode('invoice');
+
+  // Live checklist updates on key inputs
+  ['seller-name','seller-abn','inv-date','buyer-name'].forEach(id => {
+    document.getElementById(id).addEventListener('input', renderChecklist);
+  });
+});
+</script>
+</body>
+</html>

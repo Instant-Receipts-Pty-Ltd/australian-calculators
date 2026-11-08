@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Work From Home Calculator Australia: ATO 70c Per Hour | Instant Receipts</title>
+  <meta name="description" content="Free work from home calculator for Australian sole traders. Enter your hours to work out your ATO fixed rate deduction at 70 cents per hour, and compare it with claiming your actual costs." />
+  <link rel="canonical" href="https://instantreceipts.com.au/tools/work-from-home-calculator" />
+  <link rel="stylesheet" href="shared.css" />
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "Work From Home Calculator Australia",
+    "applicationCategory": "FinanceApplication",
+    "operatingSystem": "Web",
+    "url": "https://instantreceipts.com.au/tools/work-from-home-calculator",
+    "description": "Free work from home calculator for Australian sole traders. ATO 70 cents per hour fixed rate.",
+    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "AUD" },
+    "provider": { "@type": "Organization", "name": "Instant Receipts", "url": "https://instantreceipts.com.au" }
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "What is the ATO working from home rate for 2026-27?",
+        "acceptedAnswer": { "@type": "Answer", "text": "The ATO had not published a separate rate for 2026-27 as at October 2026. The latest official rate is 70 cents for each hour you work from home, which applies to 2025-26 and 2024-25." }
+      },
+      {
+        "@type": "Question",
+        "name": "What does the 70 cents per hour cover?",
+        "acceptedAnswer": { "@type": "Answer", "text": "It covers electricity and gas, your phone and internet, stationery and computer consumables such as printer ink. You cannot claim those again on top of the rate." }
+      },
+      {
+        "@type": "Question",
+        "name": "Can I count every hour I am at home?",
+        "acceptedAnswer": { "@type": "Answer", "text": "No. Only the hours you actually spend working at home count. Time spent on private tasks does not, and neither do hours worked at a client site or another workplace." }
+      }
+    ]
+  }
+  </script>
+</head>
+<body>
+
+<nav class="site-nav">
+  <div class="inner">
+    <a class="brand" href="index.html">🧾 Instant Receipts Tools</a>
+    <ul class="nav-links">
+      <li><a href="gst-calculator.html">GST</a></li>
+      <li><a href="bas-calculator.html">BAS</a></li>
+      <li><a href="sole-trader-tax-calculator.html">Tax</a></li>
+      <li><a href="mileage-calculator.html">Mileage</a></li>
+      <li><a href="work-from-home-calculator.html">WFH</a></li>
+      <li><a href="invoice-generator.html">Invoice</a></li>
+    </ul>
+  </div>
+</nav>
+
+<div class="hero">
+  <div class="inner">
+    <h1>Work From Home Calculator Australia</h1>
+    <p class="subtitle">
+      Work out your ATO working from home deduction. The latest ATO fixed rate is
+      <strong>70 cents per hour</strong> (2024-25 and 2025-26).
+      Compare it with claiming your actual costs below.
+    </p>
+
+    <div class="calc-card">
+      <h2>Fixed rate calculator</h2>
+      <p class="hint">Estimate only. Check the rate on ato.gov.au before you lodge.</p>
+
+      <div class="row3">
+        <div class="field-row" style="margin-bottom:0">
+          <label for="wfh-hours">Hours worked from home each week</label>
+          <input type="number" id="wfh-hours" min="0" max="168" step="0.5" placeholder="0" oninput="calcWfh()" />
+        </div>
+        <div class="field-row" style="margin-bottom:0">
+          <label for="wfh-weeks">Weeks a year</label>
+          <input type="number" id="wfh-weeks" min="0" max="52" step="1" value="48" oninput="calcWfh()" />
+        </div>
+        <div class="field-row" style="margin-bottom:0">
+          <label for="wfh-year">Income year</label>
+          <select id="wfh-year" onchange="calcWfh()">
+            <option value="2026-27" data-rate="0.70" data-pending="1">2026-27</option>
+            <option value="2025-26" data-rate="0.70">2025-26</option>
+            <option value="2024-25" data-rate="0.70">2024-25</option>
+            <option value="2023-24" data-rate="0.67">2023-24</option>
+            <option value="2022-23" data-rate="0.67">2022-23</option>
+          </select>
+        </div>
+      </div>
+
+      <div id="wfh-result" class="result-box mt-4 hidden">
+        <div class="result-row">
+          <span class="label">Hours worked from home</span>
+          <span class="value" id="wfh-total-hours">0 hours</span>
+        </div>
+        <div class="result-row">
+          <span class="label" id="wfh-rate-label">Rate for 2025-26</span>
+          <span class="value-green">70 cents per hour</span>
+        </div>
+        <p id="wfh-pending-note" class="result-note hidden">
+          The ATO has not published a 2026-27 rate yet, so this uses 70 cents (the 2025-26 rate). Check ato.gov.au for updates.
+        </p>
+        <hr class="divider" />
+        <div class="result-row total">
+          <span>Fixed rate deduction</span>
+          <span id="wfh-deduction">$0.00</span>
+        </div>
+      </div>
+
+      <!-- Actual cost comparison -->
+      <div class="compare-card">
+        <h3>Compare with the actual cost method</h3>
+        <p class="hint">Optional. Add the work share of your electricity, gas, phone, internet and stationery for the year.</p>
+        <div style="max-width: 280px">
+          <div class="field-row" style="margin-bottom:0">
+            <label for="wfh-actual">Actual extra costs for the year</label>
+            <div class="input-wrap">
+              <span class="prefix">$</span>
+              <input type="number" id="wfh-actual" min="0" step="1" placeholder="0" oninput="calcWfh()" />
+            </div>
+          </div>
+        </div>
+        <div id="actual-result" class="result-box mt-4 hidden">
+          <div class="result-row total">
+            <span>Actual cost deduction</span>
+            <span id="actual-deduction">$0.00</span>
+          </div>
+          <p id="actual-compare" class="result-note"></p>
+        </div>
+      </div>
+    </div>
+
+    <div class="related-links">
+      <a href="mileage-calculator.html">Mileage calculator</a>
+      <a href="sole-trader-tax-calculator.html">Sole trader tax calculator</a>
+      <a href="invoice-generator.html">Invoice generator</a>
+    </div>
+  </div>
+</div>
+
+<section class="section bg-gray">
+  <div class="inner">
+    <h2>ATO working from home rates</h2>
+    <p>
+      The fixed rate method lets you claim a set amount for each hour you work from home. The rate
+      covers your electricity and gas, phone, internet, stationery and computer consumables, so you do
+      not claim those again.
+    </p>
+    <div class="data-table-wrap">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Income year</th>
+            <th>Rate per hour</th>
+            <th>1,000 hours</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>2026-27</td><td>70 cents (ATO rate not yet published)</td><td>$700.00</td></tr>
+          <tr><td>2025-26</td><td>70 cents</td><td>$700.00</td></tr>
+          <tr><td>2024-25</td><td>70 cents</td><td>$700.00</td></tr>
+          <tr><td>2023-24</td><td>67 cents</td><td>$670.00</td></tr>
+          <tr><td>2022-23</td><td>67 cents</td><td>$670.00</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2>How to calculate the fixed rate deduction</h2>
+    <p>
+      Add up the hours you worked from home in the year and multiply by the rate. If you worked 20 hours
+      a week from home for 48 weeks in 2025-26, that is 960 hours, and 960 × $0.70 = $672.
+    </p>
+    <p>
+      Keep a record of your hours for the whole year — a timesheet, roster or diary — and one example
+      of each cost the rate covers. Only hours you actually work at home count.
+    </p>
+    <p>
+      Anything the rate does not cover, such as a desk, chair, monitor or laptop, can be claimed
+      separately with a receipt.
+    </p>
+
+    <h2 class="mt-8">Fixed rate or actual costs?</h2>
+    <p>
+      The fixed rate is quick and needs few records. The actual cost method means you work out the work
+      share of each bill and keep all of them, so it only pays off when your real extra costs are well
+      above 70 cents an hour. Pick one method for the year.
+    </p>
+
+    <div class="cta-inline">
+      <div class="text">
+        <strong>Claiming equipment? Keep the receipt</strong>
+        <p>The fixed rate does not cover your laptop, desk or chair. Scan the receipt with Instant Receipts when you buy it and it is saved, sorted and ready at tax time.</p>
+      </div>
+      <a href="https://instantreceipts.com.au/signup" class="btn-green" target="_blank" rel="noopener">
+        Try it free →
+      </a>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="inner">
+    <h2>Work from home calculator: frequently asked questions</h2>
+    <ul class="faq-list">
+      <li class="faq-item">
+        <button class="faq-btn" onclick="toggleFaq(this)">
+          What is the ATO working from home rate for 2026-27?
+          <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="faq-answer">The ATO had not published a separate rate for 2026-27 as at October 2026. The latest official rate is 70 cents for each hour you work from home, which applies to 2025-26 and 2024-25. It was 67 cents for 2023-24 and 2022-23.</div>
+      </li>
+      <li class="faq-item">
+        <button class="faq-btn" onclick="toggleFaq(this)">
+          How do I calculate my work from home deduction?
+          <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="faq-answer">Multiply the hours you worked from home in the year by the rate. For example, 20 hours a week for 48 weeks is 960 hours, and 960 × $0.70 is $672.</div>
+      </li>
+      <li class="faq-item">
+        <button class="faq-btn" onclick="toggleFaq(this)">
+          What does the 70 cents per hour cover?
+          <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="faq-answer">It covers electricity and gas, your phone and internet, stationery and computer consumables such as printer ink. You cannot claim those again on top of the rate.</div>
+      </li>
+      <li class="faq-item">
+        <button class="faq-btn" onclick="toggleFaq(this)">
+          Can I count every hour I am at home?
+          <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="faq-answer">No. Only the hours you actually spend working at home count. Time spent on private tasks does not, and neither do hours worked at a client site or another workplace.</div>
+      </li>
+      <li class="faq-item">
+        <button class="faq-btn" onclick="toggleFaq(this)">
+          When is the actual cost method better?
+          <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="faq-answer">It can be better when your real extra home costs are high, for example heating a large home office all winter. You then work out the work share of each bill and keep the bills. It takes more records than the fixed rate.</div>
+      </li>
+    </ul>
+  </div>
+</section>
+
+<div class="cta-section">
+  <div class="inner">
+    <div class="cta-box">
+      <h2>Got receipts to keep?</h2>
+      <p>Scan them with Instant Receipts and they are filed for you. 30 scans a month are free.</p>
+      <a href="https://instantreceipts.com.au/signup" class="btn-yellow" target="_blank" rel="noopener">
+        Try 30 scans for free →
+      </a>
+      <p class="sub">No credit card required</p>
+    </div>
+  </div>
+</div>
+
+<footer class="site-footer">
+  <div class="footer-links">
+    <a href="index.html">All tools</a>
+    <a href="gst-calculator.html">GST Calculator</a>
+    <a href="bas-calculator.html">BAS Calculator</a>
+    <a href="sole-trader-tax-calculator.html">Sole Trader Tax Calculator</a>
+    <a href="mileage-calculator.html">Mileage Calculator</a>
+    <a href="invoice-generator.html">Invoice Generator</a>
+  </div>
+  <p>
+    Full-featured receipt scanning, expense tracking and BAS preparation at
+    <a href="https://instantreceipts.com.au" target="_blank" rel="noopener"><strong>instantreceipts.com.au</strong></a>
+  </p>
+  <p style="margin-top:8px;">© 2024 Instant Receipts. Free tools — no signup required.</p>
+</footer>
+
+<script>
+  const WFH_RATES = {
+    '2026-27': { rate: 0.70, pending: true },
+    '2025-26': { rate: 0.70, pending: false },
+    '2024-25': { rate: 0.70, pending: false },
+    '2023-24': { rate: 0.67, pending: false },
+    '2022-23': { rate: 0.67, pending: false }
+  };
+
+  function aud(n) { return n.toLocaleString('en-AU', { style: 'currency', currency: 'AUD' }); }
+  function round2(n) { return Math.round(n * 100) / 100; }
+
+  function calcWfh() {
+    const hpw   = Math.max(0, parseFloat(document.getElementById('wfh-hours').value) || 0);
+    const wks   = Math.min(52, Math.max(0, parseFloat(document.getElementById('wfh-weeks').value) || 0));
+    const year  = document.getElementById('wfh-year').value;
+    const { rate, pending } = WFH_RATES[year] || { rate: 0.70, pending: false };
+    const actual = Math.max(0, parseFloat(document.getElementById('wfh-actual').value) || 0);
+
+    const wfhResult    = document.getElementById('wfh-result');
+    const actualResult = document.getElementById('actual-result');
+
+    if (hpw <= 0 || wks <= 0) {
+      wfhResult.classList.add('hidden');
+      actualResult.classList.add('hidden');
+      return;
+    }
+
+    const totalHours = round2(hpw * wks);
+    const deduction  = round2(totalHours * rate);
+
+    document.getElementById('wfh-total-hours').textContent  = totalHours.toLocaleString('en-AU') + ' hours';
+    document.getElementById('wfh-rate-label').textContent   = 'Rate for ' + year;
+    document.getElementById('wfh-result').querySelector('.value-green').textContent = Math.round(rate * 100) + ' cents per hour';
+    document.getElementById('wfh-deduction').textContent    = aud(deduction);
+    document.getElementById('wfh-pending-note').classList.toggle('hidden', !pending);
+    wfhResult.classList.remove('hidden');
+
+    if (actual > 0) {
+      document.getElementById('actual-deduction').textContent = aud(actual);
+      const diff = actual - deduction;
+      const note = document.getElementById('actual-compare');
+      if (diff > 0) {
+        note.textContent = 'Actual costs are higher by ' + aud(diff) + '. You need your bills and a fair way to work out the work share of each one.';
+      } else {
+        note.textContent = 'The fixed rate is higher by ' + aud(-diff) + ', and it needs far fewer records.';
+      }
+      actualResult.classList.remove('hidden');
+    } else {
+      actualResult.classList.add('hidden');
+    }
+  }
+
+  // Run once on load so the default 48 weeks shows output when hours are entered
+  function toggleFaq(btn) {
+    btn.closest('.faq-item').classList.toggle('open');
+  }
+</script>
+</body>
+</html>
