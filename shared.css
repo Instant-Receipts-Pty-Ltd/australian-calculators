@@ -53,9 +53,14 @@ a:hover { color: var(--brand-brown); text-decoration: underline; }
 .site-nav .brand img {
   width: 28px;
   height: 28px;
+  min-width: 28px;
+  min-height: 28px;
+  max-width: 28px;
+  max-height: 28px;
   border-radius: 6px;
   object-fit: cover;
   flex-shrink: 0;
+  display: block;
 }
 .site-nav .nav-links {
   display: flex;
