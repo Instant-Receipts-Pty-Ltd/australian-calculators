@@ -45,8 +45,18 @@ a:hover { color: var(--brand-brown); text-decoration: underline; }
   color: var(--brand-brown);
   text-decoration: none;
   white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
-.site-nav .brand:hover { color: var(--brand-green); }
+.site-nav .brand:hover { color: var(--brand-green); text-decoration: none; }
+.site-nav .brand img {
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  object-fit: cover;
+  flex-shrink: 0;
+}
 .site-nav .nav-links {
   display: flex;
   gap: 12px;
